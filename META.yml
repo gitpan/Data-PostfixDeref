@@ -3,7 +3,7 @@ abstract: 'Allow ->[] ->{} as an alternative to @{ } %{ }'
 author:
   - 'Ben Morrow <ben@morrow.me.uk>'
 distribution_type: module
-generated_by: 'Module::Install version 0.71'
+generated_by: 'Module::Install version 0.75'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -17,4 +17,4 @@ requires:
   Test::More: 0.68
   XSLoader: 0
   perl: 5.8.1
-version: 0.01
+version: 0.02

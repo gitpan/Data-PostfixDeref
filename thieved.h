@@ -150,13 +150,13 @@ char * PFDR_skipspace(pTHX_ register char *s);
 #undef skipspace
 #define skipspace(s) PFDR_skipspace(aTHX_ s)
 
-#if PERL_VERSION > 8
+#if PERL_VERSION > 8 || PERL_SUBVERSION > 8
 
 void PFDR_update_debugger_info(pTHX_ SV *orig_sv, const char *buf, STRLEN len);
 #undef update_debugger_info
 #define update_debugger_info(orig_sv, buf, len) PFDR_update_debugger_info(aTHX_ orig_sv, buf, len)
 
-#endif /* 5.10 */
+#endif /* 5.10 or 5.8.9 */
 
 #ifdef NEED_EXPLICIT_EXPORTS
 

@@ -5,7 +5,7 @@ use 5.008001;
 use warnings;
 use strict;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use XSLoader;
 
@@ -72,7 +72,7 @@ The hooks installed can be removed with
 Note that all code compiled while the hooks are in effect will get the
 new syntax, even code in different packages or different files. Also
 note that once the hooks are removed, string-evals won't allow the
-syntax, even is the surrounding code would.
+syntax, even if the surrounding code would.
 
 =head1 LIMITATIONS
 
