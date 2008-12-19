@@ -24,6 +24,35 @@ my $tests;
     }
 }
 
+my $T = Test::Builder->new;
+
+sub do_is {
+    my ($file, $exp, $name) = @_;
+
+    $T->todo;
+    my $rv = $T->is_eq(do $file, $exp, $name);
+    unless ($rv) {
+        $T->diag("tried: do '$file'");
+        my $perl = do {
+            local $/;
+            my $F;
+            open $F, "<", $file and <$F>;
+        };
+        $T->diag($perl);
+    }
+    $@ and $T->diag("\$\@: $@");
+    return $rv;
+}
+
+{
+    package t::Foo;
+
+    sub aref { return [1, 2] }
+    sub href { return {f => 6} }
+    sub self { return $_[0] }
+    sub four { return 4 }
+}
+
 {
     my $aref = [1, [2, 3], {a => "b"}];
     my $href = {a => 1, b => [2, 3], c => {d => 4, e => 5}, '' => 6};
@@ -31,7 +60,9 @@ my $tests;
     sub aref { return [3, 4] }
     sub href { return {e => 5} }
 
-    BEGIN { $tests += 8 }
+    our $obj = bless [], "t::Foo";
+
+    BEGIN { $tests += 9 }
 
     TODO: {
         local $TODO = 'scalars not subject to CHECKOP', 1;
@@ -44,6 +75,7 @@ scalar $aref->[1]  #foo
     [ #foo
     ]
 PERL
+    do_is   ( 't/multiline',                4, 'don\'t break method calls');
     eval_is ( q/scalar $aref->[1][]/,       2, '$aref->[1][]');
     eval_is ( q/scalar $$aref[1][]/,        2, '$$aref[1][]');
     eval_is ( q/no warnings; $aref->[()]/,  1, '$aref->[()]');

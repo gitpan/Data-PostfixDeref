@@ -23,3 +23,4 @@ t/00use.t
 t/01basic.t
 t/02interp.t
 t/03proto.t
+t/multiline

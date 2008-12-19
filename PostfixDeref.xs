@@ -58,7 +58,7 @@ STATIC OP *
 pfdr_do_ck(pTHX_ OP *o)
 {
     dMY_CXT;
-    char *s, b;
+    char *s, *oldptr, b;
     int yychar;
 
 #undef DO_ONE_OP
@@ -81,7 +81,7 @@ pfdr_do_ck(pTHX_ OP *o)
     MY_CXT.in_ck = 1;
 
     yychar = PL_yychar;
-    s = PL_bufptr;
+    oldptr = s = PL_bufptr;
 
     /* the parser may have read ahead */
     if (yychar != ARROW && yychar != YYEMPTY)
@@ -172,7 +172,11 @@ pfdr_do_ck(pTHX_ OP *o)
         Perl_croak(aTHX_ "Additional subscripts after ->%s are forbidden",
             (b == '[' ? "[]" : "{}"));
 
+    MY_CXT.in_ck = 0;
+    return o;
+
   nope:
+    PL_bufptr = oldptr;
     MY_CXT.in_ck = 0;
     return o;
 }

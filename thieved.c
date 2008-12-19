@@ -3,7 +3,6 @@
  * having to explicitly export functions was a good idea???
  */
 
-#define PERL_CORE
 #include "EXTERN.h"
 #include "perl.h"
 

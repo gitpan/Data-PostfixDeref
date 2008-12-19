@@ -15,7 +15,9 @@ if (grep /^$^O$/, qw/MSWin32 aix os2 NetWare/) {
     makemaker_args->{DEFINE} .= ' -DNEED_EXPLICIT_EXPORTS';
 }
 
-makemaker_args OBJECT => 'PostfixDeref$(OBJ_EXT) thieved$(OBJ_EXT)';
+makemaker_args 
+    OBJECT => 'PostfixDeref$(OBJ_EXT) thieved$(OBJ_EXT)',
+    INC    => '-I.';
 
 auto_install;
 WriteAll;

@@ -17,4 +17,4 @@ requires:
   Test::More: 0.68
   XSLoader: 0
   perl: 5.8.1
-version: 0.02
+version: 0.03
