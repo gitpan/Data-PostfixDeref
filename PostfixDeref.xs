@@ -61,6 +61,8 @@ pfdr_do_ck(pTHX_ OP *o)
     char *s, *oldptr, b;
     int yychar;
 
+    debug("pfdr_in_ck: %s", PL_op_name[o->op_type]);
+
 #undef DO_ONE_OP
 #define DO_ONE_OP(op) \
     case OP_ ## op : \
@@ -80,8 +82,16 @@ pfdr_do_ck(pTHX_ OP *o)
 
     MY_CXT.in_ck = 1;
 
+    debug("BEFORE: PL_yychar: %d, PL_bufptr: 0x%x, PL_lex_state: %d", 
+        PL_yychar, PL_bufptr, PL_lex_state);
+
     yychar = PL_yychar;
     oldptr = s = PL_bufptr;
+
+    /* OPf_SPECIAL means this is a do, require or use rather than a sub
+     * call */
+    if (o->op_type == OP_ENTERSUB && o->op_flags & OPf_SPECIAL)
+        goto nope;
 
     /* the parser may have read ahead */
     if (yychar != ARROW && yychar != YYEMPTY)
@@ -172,11 +182,13 @@ pfdr_do_ck(pTHX_ OP *o)
         Perl_croak(aTHX_ "Additional subscripts after ->%s are forbidden",
             (b == '[' ? "[]" : "{}"));
 
-    MY_CXT.in_ck = 0;
-    return o;
+    goto out;
 
   nope:
     PL_bufptr = oldptr;
+  out:
+    debug("AFTER: PL_yychar: %d, PL_bufptr: 0x%x, PL_lex_state: %d", 
+        PL_yychar, PL_bufptr, PL_lex_state);
     MY_CXT.in_ck = 0;
     return o;
 }

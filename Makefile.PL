@@ -7,6 +7,7 @@ all_from    'PostfixDeref.pm';
 
 requires    'XSLoader'      => 0;
 requires    'Test::More'    => '0.68';
+requires    'File::Temp'    => '0.13';
 
 ppport;
 

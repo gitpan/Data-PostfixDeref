@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 use Test::More;
+use File::Temp  qw/tempfile/;
 use Data::PostfixDeref;
 
 my $tests;
@@ -44,6 +45,16 @@ sub do_is {
     return $rv;
 }
 
+sub do_tmp_is {
+    my ($perl, $exp, $name) = @_;
+    my ($TMP, $tmp) = tempfile("doXXXXX", DIR => "t", UNLINK => 1);
+
+    print $TMP $perl;
+    close $TMP;
+
+    return do_is($tmp, $exp, $name);
+}
+
 {
     package t::Foo;
 
@@ -52,6 +63,24 @@ sub do_is {
     sub self { return $_[0] }
     sub four { return 4 }
 }
+
+{
+    BEGIN { $tests += 3 }
+
+    # [rt #43647]
+    # I don't rightly understand why this was blowing up, but loading a
+    # file which loads another file and all those newlines seem to be
+    # necessary.
+
+    my $code = "\n\nsub ::bar {\n}\n::foo();\n";
+
+    do_tmp_is ( qq{do "t/trivial.pm"; $code},      3,  "don't break do" );
+    undef &foo; undef &bar; delete $INC{"t/trivial.pm"};
+    do_tmp_is ( qq{require "t/trivial.pm"; $code}, 3,  "don't break require" );
+    undef &foo; undef &bar; delete $INC{"t/trivial.pm"};
+    do_tmp_is ( qq{use t::trivial; $code},         3,  "don't break use" );
+}
+    
 
 {
     my $aref = [1, [2, 3], {a => "b"}];
